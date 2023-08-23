@@ -1,4 +1,9 @@
+import os
+from environs import Env
 from pydantic import BaseModel, BaseSettings, Field
+
+env = Env()
+env.read_env()
 
 
 class TestUser(BaseModel):
@@ -7,9 +12,9 @@ class TestUser(BaseModel):
 
 
 class Settings(BaseSettings):
-    base_url: str = Field(..., env='BASE_URL')
-    user_login: str = Field(..., env='TEST_USER_LOGIN')
-    user_password: str = Field(..., env='TEST_USER_PASSWORD')
+    base_url: str = os.getenv('BASE_URL')
+    user_login: str = os.getenv('TEST_USER_LOGIN')
+    user_password: str = os.getenv('TEST_USER_PASSWORD')
 
     class Config:
         env_file = '.env'
@@ -17,12 +22,12 @@ class Settings(BaseSettings):
 
     @property
     def api_url(self) -> str:
-        return f'{self.base_url}/api/rest/v1'
+        return f'{self.base_url}/futurama'
 
     @property
     def user(self) -> TestUser:
         return TestUser(
-            email=self.user_login,
+            login=self.user_login,
             password=self.user_password
         )
 
